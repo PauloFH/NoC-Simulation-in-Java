@@ -3,8 +3,8 @@ package com.project.model;
 public class Flit {
     private int origem;
     private int destino;
-    private int id; // Identificador único do flit
-    private int[] dados; // Dados do flit
+    private int id;
+    private int[] dados;
 
     public Flit(int origem, int destino, int id, int[] dados) {
         this.origem = origem;

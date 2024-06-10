@@ -23,6 +23,4 @@ public class Rede {
     public Roteador getRoteador(int x, int y) {
         return rede[x][y];
     }
-
-    // Método para visualizar a rede e os estados dos roteadores (bloqueados ou não)
 }

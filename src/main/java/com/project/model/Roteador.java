@@ -19,6 +19,5 @@ public class Roteador {
         return bloqueado;
     }
 
-    // Getters para x e y
 }
 
