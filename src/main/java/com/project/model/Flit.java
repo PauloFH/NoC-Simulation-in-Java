@@ -1,16 +1,16 @@
 package com.project.model;
 
+import java.util.Random;
+
 public class Flit {
 
     private int[] origem;
     private int[] destino;
-    private int id;
     private int[] dados;
 
-    public Flit(int[] origem, int destino[], int id, int[] dados) {
+    public Flit(int[] origem, int destino[], int[] dados) {
         this.origem = origem;
         this.destino = destino;
-        this.id = id;
         this.dados = dados;
     }
     public int[] getOrigem() {
@@ -27,13 +27,6 @@ public class Flit {
 
     public void setDestino(int[] destino) {
         this.destino = destino;
-    }
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int[] getDados() {

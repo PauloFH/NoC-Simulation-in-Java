@@ -33,7 +33,7 @@ public class Simulator {
 
     }
     public void SendPackage(int origin_X, int origin_Y, int destiny_X, int destiny_Y, int[] data) {
-        Flit flit = new Flit(new int[]{origin_X, origin_Y}, new int[]{destiny_X, destiny_Y}, 1, data);
+        Flit flit = new Flit(new int[]{origin_X, origin_Y}, new int[]{destiny_X, destiny_Y}, data);
         LinkedList<int[]> route_chosed = roteamentoAStar(flit);
         if (route_chosed != null) {
             exibirCaminho(route_chosed);
@@ -52,7 +52,7 @@ public class Simulator {
 
         while (!open.isEmpty()) {
             No atualy = open.poll();
-            if (atualy.getX() == flit.getDestinX() && atualy.getY() == flit.getDestinY()) {
+            if (atualy.getX() == flit.getDestinX() && atualy.getY() == flit.getDestinY() && !network.isBlocked(atualy.getX(), atualy.getY())) {
                 return reconstruirCaminho(atualy);
             }
 
@@ -109,6 +109,8 @@ public class Simulator {
 
     private void criarGrafico(LinkedList<int[]> rota) {
         XYSeries series = new XYSeries("Rota");
+        XYSeries blockedPointsSeries = new XYSeries("Pontos Bloqueados");
+
         for (int[] pos : rota) {
             series.add(pos[0], pos[1]);
         }
