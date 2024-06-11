@@ -2,30 +2,30 @@ package com.project.model;
 
 public class Flit {
 
-    private int origem;
-    private int destino;
+    private int[] origem;
+    private int[] destino;
     private int id;
     private int[] dados;
 
-    public Flit(int origem, int destino, int id, int[] dados) {
+    public Flit(int[] origem, int destino[], int id, int[] dados) {
         this.origem = origem;
         this.destino = destino;
         this.id = id;
         this.dados = dados;
     }
-    public int getOrigem() {
+    public int[] getOrigem() {
         return origem;
     }
 
-    public void setOrigem(int origem) {
+    public void setOrigem(int[] origem) {
         this.origem = origem;
     }
 
-    public int getDestino() {
+    public int[] getDestino() {
         return destino;
     }
 
-    public void setDestino(int destino) {
+    public void setDestino(int[] destino) {
         this.destino = destino;
     }
     public int getId() {
@@ -43,5 +43,16 @@ public class Flit {
     public void setDados(int[] dados) {
         this.dados = dados;
     }
-
+    public int getOriginX(){
+        return origem[0];
+    }
+    public int getDestinX(){
+        return destino[0];
+    }
+    public int getOriginY(){
+        return origem[1];
+    }
+    public int getDestinY(){
+        return destino[1];
+    }
 }

@@ -28,8 +28,8 @@ public class Simulator {
     }
 
     public void SendPackage(int origin_X, int origin_Y, int destiny_X, int destiny_Y, int[] data) {
-        Flit flit = new Flit(origin_X, destiny_X, 1, data);
-        LinkedList<int[]> route_chosed = roteamentoAStar(flit, origin_X, origin_Y, destiny_X, destiny_Y);
+        Flit flit = new Flit(new int[]{origin_X, origin_Y}, new int[]{destiny_X, destiny_Y}, 1, data);
+        LinkedList<int[]> route_chosed = roteamentoAStar(flit);
         if (route_chosed != null) {
             exibirCaminho(route_chosed);
             criarGrafico(route_chosed);
@@ -38,21 +38,21 @@ public class Simulator {
         }
     }
 
-    private LinkedList<int[]> roteamentoAStar(Flit flit, int origin_X, int origin_Y, int destiny_X, int destiny_Y) {
+    private LinkedList<int[]> roteamentoAStar(Flit flit) {
         PriorityQueue<No> open = new PriorityQueue<>();
         Set<No> lock = new HashSet<>();
 
-        No start = new No(origin_X, origin_Y, null, 0, calcularHeuristica(origin_X, origin_Y, destiny_X, destiny_Y));
+        No start = new No(flit.getOriginX(), flit.getOriginY(), null, 0, calcularHeuristica(flit.getOriginX(), flit.getOriginY(), flit.getDestinX(), flit.getDestinY()));
         open.add(start);
 
         while (!open.isEmpty()) {
             No atualy = open.poll();
-            if (atualy.getX() == destiny_X && atualy.getY() == destiny_Y) {
+            if (atualy.getX() == flit.getDestinX() && atualy.getY() == flit.getDestinY()) {
                 return reconstruirCaminho(atualy);
             }
 
             lock.add(atualy);
-            for (No vizinho : getVizinhos(atualy, destiny_X, destiny_Y)) {
+            for (No vizinho : getVizinhos(atualy, flit.getDestinX(), flit.getDestinY())) {
                 if (lock.contains(vizinho) || network.isBlocked(vizinho.getX(), vizinho.getY())) {
                     continue;
                 }
@@ -123,8 +123,13 @@ public class Simulator {
         );
 
         XYPlot plot = chart.getXYPlot();
+        NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setInverted(true); // Inverte o eixo Y
+        domainAxis.setRange(0, size_network - 1);
+        rangeAxis.setRange(0, size_network - 1);
+        domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        rangeAxis.setInverted(true);
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setSeriesLinesVisible(0, true);

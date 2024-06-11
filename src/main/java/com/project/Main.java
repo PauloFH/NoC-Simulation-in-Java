@@ -9,7 +9,8 @@ public class Main {
         simulator.addBlock(3, 3);
         simulator.addBlock(4, 4);
         simulator.addBlock(7, 3);
+        simulator.addBlock(7, 6);
         int[] dads = {1, 2, 3, 4};
-        simulator.SendPackage(0, 0, 7, 7, dads);
+        simulator.SendPackage(1, 2, 7, 7, dads);
     }
 }
