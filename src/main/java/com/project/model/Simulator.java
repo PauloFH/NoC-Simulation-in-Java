@@ -26,7 +26,12 @@ public class Simulator {
     public void addBlock(int x, int y) {
         network.block_Router(x, y);
     }
+    public void addBlocks(int[][] blocks) {
+        for(int[] block : blocks){
+            network.block_Router(block[0], block[1]);
+        }
 
+    }
     public void SendPackage(int origin_X, int origin_Y, int destiny_X, int destiny_Y, int[] data) {
         Flit flit = new Flit(new int[]{origin_X, origin_Y}, new int[]{destiny_X, destiny_Y}, 1, data);
         LinkedList<int[]> route_chosed = roteamentoAStar(flit);
