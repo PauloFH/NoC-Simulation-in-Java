@@ -14,50 +14,50 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
-public class Simulador {
-    private Rede rede;
-    private int tamanho;
+public class Simulator {
+    private final Network network;
+    private final int size_network;
 
-    public Simulador(int tamanho) {
-        this.tamanho = tamanho;
-        this.rede = new Rede(tamanho);
+    public Simulator(int size_network) {
+        this.size_network = size_network;
+        this.network = new Network(size_network);
     }
 
-    public void adicionarBloqueio(int x, int y) {
-        rede.bloquearRoteador(x, y);
+    public void addBlock(int x, int y) {
+        network.block_Router(x, y);
     }
 
-    public void enviarPacote(int origemX, int origemY, int destinoX, int destinoY, int[] dados) {
-        Flit flit = new Flit(origemX, destinoX, 1, dados);
-        LinkedList<int[]> rota = roteamentoAStar(flit, origemX, origemY, destinoX, destinoY);
-        if (rota != null) {
-            exibirCaminho(rota);
-            criarGrafico(rota);
+    public void SendPackage(int origin_X, int origin_Y, int destiny_X, int destiny_Y, int[] data) {
+        Flit flit = new Flit(origin_X, destiny_X, 1, data);
+        LinkedList<int[]> route_chosed = roteamentoAStar(flit, origin_X, origin_Y, destiny_X, destiny_Y);
+        if (route_chosed != null) {
+            exibirCaminho(route_chosed);
+            criarGrafico(route_chosed);
         } else {
             System.out.println("Nenhum caminho encontrado.");
         }
     }
 
-    private LinkedList<int[]> roteamentoAStar(Flit flit, int origemX, int origemY, int destinoX, int destinoY) {
-        PriorityQueue<No> aberta = new PriorityQueue<>();
-        Set<No> fechada = new HashSet<>();
+    private LinkedList<int[]> roteamentoAStar(Flit flit, int origin_X, int origin_Y, int destiny_X, int destiny_Y) {
+        PriorityQueue<No> open = new PriorityQueue<>();
+        Set<No> lock = new HashSet<>();
 
-        No inicio = new No(origemX, origemY, null, 0, calcularHeuristica(origemX, origemY, destinoX, destinoY));
-        aberta.add(inicio);
+        No start = new No(origin_X, origin_Y, null, 0, calcularHeuristica(origin_X, origin_Y, destiny_X, destiny_Y));
+        open.add(start);
 
-        while (!aberta.isEmpty()) {
-            No atual = aberta.poll();
-            if (atual.getX() == destinoX && atual.getY() == destinoY) {
-                return reconstruirCaminho(atual);
+        while (!open.isEmpty()) {
+            No atualy = open.poll();
+            if (atualy.getX() == destiny_X && atualy.getY() == destiny_Y) {
+                return reconstruirCaminho(atualy);
             }
 
-            fechada.add(atual);
-            for (No vizinho : getVizinhos(atual, destinoX, destinoY)) {
-                if (fechada.contains(vizinho) || rede.isBloqueado(vizinho.getX(), vizinho.getY())) {
+            lock.add(atualy);
+            for (No vizinho : getVizinhos(atualy, destiny_X, destiny_Y)) {
+                if (lock.contains(vizinho) || network.isBlocked(vizinho.getX(), vizinho.getY())) {
                     continue;
                 }
-                if (!aberta.contains(vizinho) || vizinho.getFCost() < atual.getFCost()) {
-                    aberta.add(vizinho);
+                if (!open.contains(vizinho) || vizinho.getFCost() < atualy.getFCost()) {
+                    open.add(vizinho);
                 }
             }
         }
@@ -65,7 +65,7 @@ public class Simulador {
     }
 
     private int calcularHeuristica(int x, int y, int destinoX, int destinoY) {
-        // Usando a distância de Manhattan como heurística
+
         return Math.abs(x - destinoX) + Math.abs(y - destinoY);
     }
 
@@ -75,7 +75,7 @@ public class Simulador {
         for (int[] dir : direcoes) {
             int novoX = atual.getX() + dir[0];
             int novoY = atual.getY() + dir[1];
-            if (novoX >= 0 && novoX < tamanho && novoY >= 0 && novoY < tamanho) {
+            if (novoX >= 0 && novoX < size_network && novoY >= 0 && novoY < size_network) {
                 int gCost = atual.getGCost() + 1;
                 int hCost = calcularHeuristica(novoX, novoY, destinoX, destinoY);
                 vizinhos.add(new No(novoX, novoY, atual, gCost, hCost));

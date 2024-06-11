@@ -1,6 +1,7 @@
 package com.project.model;
 
 public class Flit {
+
     private int origem;
     private int destino;
     private int id;
@@ -12,6 +13,35 @@ public class Flit {
         this.id = id;
         this.dados = dados;
     }
+    public int getOrigem() {
+        return origem;
+    }
 
-    // Getters e Setters
+    public void setOrigem(int origem) {
+        this.origem = origem;
+    }
+
+    public int getDestino() {
+        return destino;
+    }
+
+    public void setDestino(int destino) {
+        this.destino = destino;
+    }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int[] getDados() {
+        return dados;
+    }
+
+    public void setDados(int[] dados) {
+        this.dados = dados;
+    }
+
 }
