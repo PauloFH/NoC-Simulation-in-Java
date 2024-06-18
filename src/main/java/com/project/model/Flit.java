@@ -4,7 +4,6 @@ public class Flit {
     private final int sourceX, sourceY;
     private final int destX, destY;
     private final int data;
-    private int hops;
 
     public Flit(int sourceX, int sourceY, int destX, int destY, int data) {
         this.sourceX = sourceX;
@@ -12,7 +11,6 @@ public class Flit {
         this.destX = destX;
         this.destY = destY;
         this.data = data;
-        this.hops = 0;
     }
 
     public int getSourceX() {
