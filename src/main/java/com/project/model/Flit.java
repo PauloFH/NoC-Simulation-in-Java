@@ -31,11 +31,5 @@ public class Flit {
         return destY;
     }
 
-    public int getHops() {
-        return hops;
-    }
 
-    public void incrementHops() {
-        this.hops++;
-    }
 }

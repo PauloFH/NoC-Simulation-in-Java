@@ -1,12 +1,11 @@
 package com.project.model;
 
-import java.util.ArrayList;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Router {
-    private int x, y;
+    private final int x, y;
     private boolean blocked;
     private boolean receivedFlit;
     private boolean processing;
@@ -41,9 +40,6 @@ public class Router {
         this.blocked = blocked;
     }
 
-    public boolean hasReceivedFlit() {
-        return receivedFlit;
-    }
 
     public void setReceivedFlit(boolean receivedFlit) {
         this.receivedFlit = receivedFlit;
@@ -54,9 +50,7 @@ public class Router {
         this.processing = processing;
     }
 
-    public boolean isProcessing() {
-        return processing;
-    }
+
 
     public boolean isPortOccupied(int port) {
         return occupiedPorts.contains(port);
@@ -70,9 +64,6 @@ public class Router {
         occupiedPorts.clear();
     }
 
-    public void processFlits() {
-        // Implementação do processamento de pacotes
-    }
 
     public char getStatusChar() {
         if (blocked) return 'X';
