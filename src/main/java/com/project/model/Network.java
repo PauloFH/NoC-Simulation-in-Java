@@ -1,26 +1,35 @@
 package com.project.model;
 
-public class Network {
-    private final Router[][] network;
+import java.util.HashSet;
+import java.util.Set;
 
-    public Network(int size_network) {
-        network = new Router[size_network][size_network];
-        for (int i = 0; i < size_network; i++) {
-            for (int j = 0; j < size_network; j++) {
-                network[i][j] = new Router(i, j);
-            }
-        }
+public class Network {
+    private final int size;
+    private final boolean[][] blocked;
+    private final Set<String> occupiedRouters;
+
+
+    public Network(int size) {
+        this.size = size;
+        this.blocked = new boolean[size][size];
+        this.occupiedRouters = new HashSet<>();
     }
 
-    public void block_Router(int x, int y) {
-        network[x][y].setBlock(true);
+    public void blockRouter(int x, int y) {
+        blocked[x][y] = true;
     }
 
     public boolean isBlocked(int x, int y) {
-        return network[x][y].isBlock();
+        return blocked[x][y];
     }
 
-    public Router getRouter(int x, int y) {
-        return network[x][y];
+    public boolean isRouterAvailable(int x, int y, int clock) {
+        String key = x + "," + y + "," + clock;
+        return !occupiedRouters.contains(key);
+    }
+
+    public void occupyRouter(int x, int y, int clock) {
+        String key = x + "," + y + "," + clock;
+        occupiedRouters.add(key);
     }
 }

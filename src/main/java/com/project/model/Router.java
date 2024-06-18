@@ -18,6 +18,4 @@ public class Router {
     public boolean isBlock() {
         return block;
     }
-
 }
-

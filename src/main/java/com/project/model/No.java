@@ -5,6 +5,7 @@ public class No implements Comparable<No> {
     private int hCost;
     private No pai;
 
+
     public No(int x, int y, No pai, int gCost, int hCost) {
         this.x = x;
         this.y = y;

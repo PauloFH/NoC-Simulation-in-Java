@@ -1,46 +1,81 @@
 package com.project.model;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.HashSet;
-import java.util.Set;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
+
+import java.util.*;
+
 public class Simulator {
     private final Network network;
     private final int size_network;
+    private final LinkedList<Flit> flits;
+    private int clock;
 
     public Simulator(int size_network) {
+        this.flits = new LinkedList<>();
         this.size_network = size_network;
         this.network = new Network(size_network);
+        this.clock = 0;
     }
 
     public void addBlock(int x, int y) {
-        network.block_Router(x, y);
+        network.blockRouter(x, y);
     }
-    public void addBlocks(int[][] blocks) {
-        for(int[] block : blocks){
-            network.block_Router(block[0], block[1]);
-        }
 
-    }
-    public void SendPackage(int origin_X, int origin_Y, int destiny_X, int destiny_Y, int[] data) {
-        Flit flit = new Flit(new int[]{origin_X, origin_Y}, new int[]{destiny_X, destiny_Y}, data);
-        LinkedList<int[]> route_chosed = roteamentoAStar(flit);
-        if (route_chosed != null) {
-            exibirCaminho(route_chosed);
-            criarGrafico(route_chosed);
-        } else {
-            System.out.println("Nenhum caminho encontrado.");
+    public void addBlocks(int[][] blocks) {
+        for (int[] block : blocks) {
+            network.blockRouter(block[0], block[1]);
         }
+    }
+
+    public void addFlit(int originX, int originY, int destinyX, int destinyY, int data) {
+        Flit flit = new Flit(new int[]{originX, originY}, new int[]{destinyX, destinyY}, data);
+        flit.setId(flits.size());
+        flits.add(flit);
+    }
+
+    public void run() {
+        while (!flits.isEmpty()) {
+            clockTick();
+            clock++;
+        }
+        System.out.println("Simulação concluída.");
+    }
+
+    private void clockTick() {
+        System.out.println("Clock tick: " + clock);
+        LinkedList<Flit> deliveredFlits = new LinkedList<>();
+
+        for (int i = 0; i < flits.size(); i++) {
+            Flit flit = flits.get(i);
+            if (!flit.isDelivered()) {
+                LinkedList<int[]> route = flit.getRoute();
+                if (route.isEmpty()) {
+                    route = roteamentoAStar(flit);
+                    flit.setRoute(route);
+                    if(route == null || route.isEmpty()){
+                        System.out.println("Flit "+ flit.getId()+" não tem rota possivel e por isso o pacote não será enviado");
+                        flits.remove(flit);
+                        i = i-1;
+                        continue;
+                    }
+                }
+
+                if (route != null && !route.isEmpty()) {
+                    int[] nextStep = route.poll();
+                    if (network.isRouterAvailable(nextStep[0], nextStep[1], clock)) {
+                        flit.advanceTo(nextStep);
+                        network.occupyRouter(nextStep[0], nextStep[1], clock);
+                        System.out.println("Flit " + flit.getId() + " avançou para (" + nextStep[0] + ", " + nextStep[1] + ")");
+                    }
+                }
+
+            }
+
+            if (flit.isDelivered()) {
+                deliveredFlits.add(flit);
+                System.out.println("Flit " + flit.getId() + " entregue em (" + flit.getDestinX() + ", " + flit.getDestinY() + ")");
+            }
+        }
+        flits.removeAll(deliveredFlits);
+        System.out.println("Fim do clock \nStatus atual: "+flits.size()+ " flits a serem entregues" );
     }
 
     private LinkedList<int[]> roteamentoAStar(Flit flit) {
@@ -51,17 +86,17 @@ public class Simulator {
         open.add(start);
 
         while (!open.isEmpty()) {
-            No atualy = open.poll();
-            if (atualy.getX() == flit.getDestinX() && atualy.getY() == flit.getDestinY() && !network.isBlocked(atualy.getX(), atualy.getY())) {
-                return reconstruirCaminho(atualy);
+            No atual = open.poll();
+            if (atual.getX() == flit.getDestinX() && atual.getY() == flit.getDestinY() && !network.isBlocked(atual.getX(), atual.getY())) {
+                return reconstruirCaminho(atual);
             }
 
-            lock.add(atualy);
-            for (No vizinho : getVizinhos(atualy, flit.getDestinX(), flit.getDestinY())) {
+            lock.add(atual);
+            for (No vizinho : getVizinhos(atual, flit.getDestinX(), flit.getDestinY())) {
                 if (lock.contains(vizinho) || network.isBlocked(vizinho.getX(), vizinho.getY())) {
                     continue;
                 }
-                if (!open.contains(vizinho) || vizinho.getFCost() < atualy.getFCost()) {
+                if (!open.contains(vizinho) || vizinho.getFCost() < atual.getFCost()) {
                     open.add(vizinho);
                 }
             }
@@ -70,7 +105,6 @@ public class Simulator {
     }
 
     private int calcularHeuristica(int x, int y, int destinoX, int destinoY) {
-
         return Math.abs(x - destinoX) + Math.abs(y - destinoY);
     }
 
@@ -98,58 +132,4 @@ public class Simulator {
         }
         return rota;
     }
-
-    private void exibirCaminho(LinkedList<int[]> rota) {
-        System.out.println("Rota:");
-        for (int[] pos : rota) {
-            System.out.println("(" + pos[0] + ", " + pos[1] + ")");
-        }
-        System.out.println("Total de saltos: " + (rota.size() - 1));
-    }
-
-    private void criarGrafico(LinkedList<int[]> rota) {
-        XYSeries series = new XYSeries("Rota");
-        XYSeries blockedPointsSeries = new XYSeries("Pontos Bloqueados");
-
-        for (int[] pos : rota) {
-            series.add(pos[0], pos[1]);
-        }
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series);
-
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                "Roteamento",
-                "X",
-                "Y",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-
-        XYPlot plot = chart.getXYPlot();
-        NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        domainAxis.setRange(0, size_network - 1);
-        rangeAxis.setRange(0, size_network - 1);
-        domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        rangeAxis.setInverted(true);
-
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesLinesVisible(0, true);
-        renderer.setSeriesShapesVisible(0, true);
-        plot.setRenderer(renderer);
-
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(560, 560));
-        ApplicationFrame frame = new ApplicationFrame("Roteamento");
-        frame.setContentPane(chartPanel);
-        frame.pack();
-        RefineryUtilities.centerFrameOnScreen(frame);
-        frame.setVisible(true);
-    }
-
 }
