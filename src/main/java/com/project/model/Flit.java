@@ -1,72 +1,41 @@
 package com.project.model;
 
-import java.util.LinkedList;
-
 public class Flit {
-    private int id;
-    private final int[] origin;
-    private final int[] destination;
+    private final int sourceX, sourceY;
+    private final int destX, destY;
     private final int data;
-    private boolean delivered;
-    private LinkedList<int[]> route;
+    private int hops;
 
-
-    public Flit(int[] origin, int[] destination, int data) {
-        this.origin = origin;
-        this.destination = destination;
+    public Flit(int sourceX, int sourceY, int destX, int destY, int data) {
+        this.sourceX = sourceX;
+        this.sourceY = sourceY;
+        this.destX = destX;
+        this.destY = destY;
         this.data = data;
-        this.delivered = false;
-        this.route = new LinkedList<>();
+        this.hops = 0;
     }
 
-    public int getOriginX() {
-        return origin[0];
+    public int getSourceX() {
+        return sourceX;
     }
 
-    public int getOriginY() {
-        return origin[1];
+    public int getSourceY() {
+        return sourceY;
     }
 
-    public int getDestinX() {
-        return destination[0];
+    public int getDestX() {
+        return destX;
     }
 
-    public int getDestinY() {
-        return destination[1];
+    public int getDestY() {
+        return destY;
     }
 
-    public int getData() {
-        return data;
+    public int getHops() {
+        return hops;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public boolean isDelivered() {
-        return delivered;
-    }
-
-    public void setDelivered(boolean delivered) {
-        this.delivered = delivered;
-    }
-
-    public void advanceTo(int[] nextStep) {
-        route.add(nextStep);
-        if (nextStep[0] == destination[0] && nextStep[1] == destination[1]) {
-            delivered = true;
-        }
-    }
-
-    public LinkedList<int[]> getRoute() {
-        return route;
-    }
-
-    public void setRoute(LinkedList<int[]> route) {
-        this.route = route;
+    public void incrementHops() {
+        this.hops++;
     }
 }
