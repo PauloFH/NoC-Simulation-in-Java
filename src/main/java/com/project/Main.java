@@ -12,10 +12,12 @@ public class Main {
 
         int[][] blocks = {
                 {1, 1}, {1, 2}, {1, 3},
-                {2, 1}, {3, 1}, {2, 3},
-                {3, 3}, {4, 3}, {5, 3},
-                {6, 3}, {3, 2}, {3, 4},
-                {3, 5}, {3, 6}};
+                {2, 1},         {2, 3},
+                {3, 1}, {3, 2}, {3, 3}, {3, 4},{3, 5}, {3, 6},
+                                {4, 3},
+                                {5, 3},
+                                {6, 3}
+                                                                    };
 
         List<int[]> blockedRouters = new ArrayList<>(Arrays.asList(blocks));
         simulator.setBlockedRouters(blockedRouters);

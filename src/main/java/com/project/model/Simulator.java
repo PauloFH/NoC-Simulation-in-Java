@@ -39,7 +39,7 @@ public class Simulator {
                 System.out.println("Flit lançado pelo Roteador: (" + flit.getSourceX() + ", " + flit.getSourceY() + ")" );
                 assert current != null;
                 if((flit.getDestX() == current.getX() && flit.getDestY() == current.getY())){
-                    System.out.println("Flit entregue com sucesso");
+                    System.out.println("Flit enviado por (" + flit.getSourceX() + ", " + flit.getSourceY() + ") foi entregue em: ("+ dest.getX() + ", " + dest.getY() +") com data: " + flit.getData()+" com sucesso!!" );
                 }else{
                     System.out.println("Roteador do proximo salto: (" + current.getX() + ", " + current.getY() + ")");
                     if (dest != null) {
