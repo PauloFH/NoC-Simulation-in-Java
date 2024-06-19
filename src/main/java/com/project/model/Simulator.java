@@ -5,6 +5,7 @@ import java.util.*;
 public class Simulator {
     private final Router[][] network;
     private final int size = 8;
+    private Map<Integer, Flit> flit_initials;
 
     public Simulator() {
         network = new Router[size][size];
@@ -29,27 +30,35 @@ public class Simulator {
             System.out.println();
         }
         System.out.println();
-
-        // Mostrar os flits e seus destinos
-        for (Deque<Router> path : paths) {
+        int index_flit = 0;
+        for(Deque<Router> path : paths) {
             if (!path.isEmpty()) {
+                Flit flit = flit_initials.get(index_flit);
                 Router current = path.peek();
                 Router dest = path.peekLast();
-                System.out.println("Flit atual: (" + current.getX() + ", " + current.getY() + ")");
-                if (dest != null) {
-                    System.out.println("Destino: (" + dest.getX() + ", " + dest.getY() + ")");
-                } else {
-                    System.out.println("Chegou ao destino!");
+                System.out.println("Flit lançado pelo Roteador: (" + flit.getSourceX() + ", " + flit.getSourceY() + ")" );
+                assert current != null;
+                if((flit.getDestX() == current.getX() && flit.getDestY() == current.getY())){
+                    System.out.println("Flit entregue com sucesso");
+                }else{
+                    System.out.println("Roteador do proximo salto: (" + current.getX() + ", " + current.getY() + ")");
+                    if (dest != null) {
+                        System.out.println("Destino: (" + dest.getX() + ", " + dest.getY() + ")");
+                    }
+                    System.out.println();
                 }
-                System.out.println();
+
             }
+            index_flit++;
         }
         System.out.println("------------------------------");
+
     }
 
     public void run(List<Flit> flits) {
         AStar AStar = new AStar(this.network);
-
+        flit_initials = new HashMap<>();
+        int index_flit = 0;
         List<Deque<Router>> paths = new ArrayList<>();
         for (Flit flit : flits) {
             List<Router> path = AStar.findPath(flit.getSourceX(), flit.getSourceY(), flit.getDestX(), flit.getDestY());
@@ -57,7 +66,10 @@ public class Simulator {
                 System.out.println("O pacote de origem (" + flit.getSourceX() + ", " + flit.getSourceY() + ") não pode chegar ao destino (" + flit.getDestX() + ", " + flit.getDestY() + ") por não ter caminho");
                 continue;
             }
-            paths.add(new LinkedList<>(path));
+            LinkedList<Router> tmp = new LinkedList<>(path);
+            paths.add(tmp);
+            flit_initials.put(index_flit, flit);
+            index_flit++;
         }
 
         int clock = 0;
@@ -77,12 +89,15 @@ public class Simulator {
                         router.setProcessing(true);
                         router.occupyPort(direction);
                         packetsRemaining = true;
-                    }
-
-                    // Marcar o destino quando o pacote chegar
-                    if (path.isEmpty() && router.getX() == router.getX() && router.getY() == router.getY()) {
+                    } else if (nextRouter == null) {
+                        path.poll();
                         router.setReceivedFlit(true);
                     }
+
+
+
+                }else{
+
                 }
             }
 

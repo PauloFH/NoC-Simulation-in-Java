@@ -21,6 +21,7 @@ public class Main {
         simulator.setBlockedRouters(blockedRouters);
         int data = 255;
         List<Flit> flits = new ArrayList<>();
+        flits.add(new Flit(0,1,0,3, data));
         flits.add(new Flit(0, 0, 2, 2, data));
         flits.add(new Flit(7, 0, 0, 7, data));
         flits.add(new Flit(2, 2, 6, 6, data));
