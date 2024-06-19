@@ -39,18 +39,12 @@ public class Router {
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
     }
-
-
     public void setReceivedFlit(boolean receivedFlit) {
         this.receivedFlit = receivedFlit;
     }
-
-
     public void setProcessing(boolean processing) {
         this.processing = processing;
     }
-
-
 
     public boolean isPortOccupied(int port) {
         return occupiedPorts.contains(port);
@@ -63,7 +57,6 @@ public class Router {
     public void releasePorts() {
         occupiedPorts.clear();
     }
-
 
     public char getStatusChar() {
         if (blocked) return 'X';

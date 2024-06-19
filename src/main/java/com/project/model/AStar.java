@@ -4,6 +4,7 @@ import java.util.*;
 
 public class AStar {
     private final Router[][] network;
+
     public AStar(Router[][] network) {
         this.network = network;
     }

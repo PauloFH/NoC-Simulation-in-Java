@@ -28,6 +28,8 @@ public class Flit {
     public int getDestY() {
         return destY;
     }
-
-
+    @Override
+    public String toString() {
+        return "-------------------------\norigem: (" + sourceX + ", " + sourceY + ")\n destino: (" + destX + ", " + destY + ") \n dados: " + data + "-------------------------";
+    }
 }

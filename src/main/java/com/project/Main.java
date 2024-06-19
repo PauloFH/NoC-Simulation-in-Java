@@ -3,9 +3,7 @@ package com.project;
 import com.project.model.Flit;
 import com.project.model.Simulator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Main {
 
@@ -32,5 +30,7 @@ public class Main {
         flits.add(new Flit(4, 4, 7, 7, data));
 
         simulator.run(flits);
+
+
     }
 }
