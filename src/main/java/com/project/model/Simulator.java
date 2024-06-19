@@ -21,7 +21,7 @@ public class Simulator {
         }
     }
 
-    public void printNetwork() {
+    public void printNetwork(List<Deque<Router>> paths) {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 System.out.print(network[i][j].getStatusChar() + " ");
@@ -29,12 +29,28 @@ public class Simulator {
             System.out.println();
         }
         System.out.println();
+
+        // Mostrar os flits e seus destinos
+        for (Deque<Router> path : paths) {
+            if (!path.isEmpty()) {
+                Router current = path.peek();
+                Router dest = path.peekLast();
+                System.out.println("Flit atual: (" + current.getX() + ", " + current.getY() + ")");
+                if (dest != null) {
+                    System.out.println("Destino: (" + dest.getX() + ", " + dest.getY() + ")");
+                } else {
+                    System.out.println("Chegou ao destino!");
+                }
+                System.out.println();
+            }
+        }
+        System.out.println("------------------------------");
     }
 
     public void run(List<Flit> flits) {
         AStar AStar = new AStar(this.network);
 
-        List<Queue<Router>> paths = new ArrayList<>();
+        List<Deque<Router>> paths = new ArrayList<>();
         for (Flit flit : flits) {
             List<Router> path = AStar.findPath(flit.getSourceX(), flit.getSourceY(), flit.getDestX(), flit.getDestY());
             if (path == null) {
@@ -50,7 +66,7 @@ public class Simulator {
             packetsRemaining = false;
 
             // Processar pacotes em cada caminho
-            for (Queue<Router> path : paths) {
+            for (Deque<Router> path : paths) {
                 if (!path.isEmpty()) {
                     Router router = path.peek();
                     Router nextRouter = path.size() > 1 ? path.toArray(new Router[0])[1] : null;
@@ -72,8 +88,7 @@ public class Simulator {
 
             // Imprimir o estado atual da rede
             System.out.println("Clock: " + clock);
-            printNetwork();
-
+            printNetwork(paths);
 
             for (Router[] row : this.network) {
                 for (Router router : row) {
