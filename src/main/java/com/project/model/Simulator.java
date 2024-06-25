@@ -4,10 +4,11 @@ import java.util.*;
 
 public class Simulator {
     private final Router[][] network;
-    private final int size = 8;
+    private final int size;
     private Map<Integer, Flit> flit_initials;
 
-    public Simulator() {
+    public Simulator(int sz) {
+        this.size = sz;
         network = new Router[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
