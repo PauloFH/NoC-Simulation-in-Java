@@ -30,6 +30,7 @@ public class Simulator {
             }
             System.out.println();
         }
+        System.out.println("(Y:coluna X:linha)");
         System.out.println();
         int index_flit = 0;
         for(Deque<Router> path : paths) {
@@ -52,7 +53,7 @@ public class Simulator {
             }
             index_flit++;
         }
-        System.out.println("------------------------------");
+        System.out.println("-----------------------------------------------------------------------------");
 
     }
 
@@ -78,16 +79,17 @@ public class Simulator {
         while (packetsRemaining) {
             packetsRemaining = false;
 
-            // Processar pacotes em cada caminho
+
             for (Deque<Router> path : paths) {
                 if (!path.isEmpty()) {
                     Router router = path.peek();
                     Router nextRouter = path.size() > 1 ? path.toArray(new Router[0])[1] : null;
                     int direction = getDirection(router, nextRouter);
-
-                    if (nextRouter != null && !router.isPortOccupied(direction) && router.isAccessible() && nextRouter.isAccessible()) {
+                    int nextdirection = getDirection(nextRouter,router);
+                    if (nextRouter != null && !router.isPortOccupied(direction) && !nextRouter.isPortOccupied(nextdirection) && router.isAccessible() && nextRouter.isAccessible()) {
                         path.poll();
                         router.setProcessing(true);
+                        nextRouter.occupyPort(nextdirection);
                         router.occupyPort(direction);
                         packetsRemaining = true;
                     } else if (nextRouter == null) {
@@ -108,6 +110,7 @@ public class Simulator {
                 for (Router router : row) {
                     router.setProcessing(false);
                     router.releasePorts();
+
                 }
             }
 
@@ -116,7 +119,7 @@ public class Simulator {
     }
 
     private int getDirection(Router current, Router next) {
-        if (next == null) return -1;
+        if (next == null || current == null) return -1;
         if (next.getX() > current.getX()) return Router.RIGHT;
         if (next.getX() < current.getX()) return Router.LEFT;
         if (next.getY() > current.getY()) return Router.UP;
